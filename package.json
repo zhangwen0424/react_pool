@@ -1,0 +1,19 @@
+{
+  "name": "react_test",
+  "version": "1.0.0",
+  "description": "react全家桶学习",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhangwen0424/react_test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhangwen0424/react_test/issues"
+  },
+  "homepage": "https://github.com/zhangwen0424/react_test#readme"
+}
