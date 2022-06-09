@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+        总结：
+          1.类中的构造器不是必须要写的，要对实例进行一些初始化的操作，如添加指定属性时才写。
+          2.如果A类继承了B类，且A类中写了构造器，那么A类构造器中的super是必须要调用的。
+          3.类中所定义的方法，都放在了类的原型对象上，供实例去使用。
+      */
+      //创建一个Person类
+      class Person {
+        // 1.类中的构造器不是必须要写的，要对实例进行一些初始化的操作，如添加指定属性时才写。
+        constructor(name, age) {
+          //构造器中的this是谁？—— 类的实例对象
+          this.name = name;
+          this.age = age;
+        }
+        //类中可以直接写赋值语句,如下代码的含义是：给Person的实例对象添加一个属性，名为a，值为1
+        a = 1;
+        wheel = 4;
+        speak() {
+          console.log(`我叫${this.name},我年龄是${this.age}岁了`);
+        }
+        study() {
+          console.log("我超级努力学习");
+        }
+      }
+
+      class Student extends Person {
+        constructor(name, age, grade) {
+          super(name, age);
+          this.grade = grade;
+        }
+        //重写从父类继承过来的方法
+        speak() {
+          console.log(
+            `我叫${this.name},我年龄是${this.age}岁了,我上${this.grade}年级了`
+          );
+          this.study();
+        }
+        //重写从父类继承过来的方法
+        study() {
+          //study方法放在了哪里？——类的原型对象上，供实例使用
+          //通过Student实例调用study时，study中的this就是Student实例
+          console.log("我在努力学习");
+        }
+      }
+      let p = new Person("小王", "18");
+      let ple = new Person();
+      console.log("p:", p, p.speak()); //{"a":1,"wheel":4,"name":"小王","age":"18"}  我叫小王,我年龄是18岁了
+      console.log("ple:", ple); //{"a":1,"wheel":4,age: undefined,name: undefined}
+      let s = new Student("张三", "20", "二");
+      console.log("s:", s, s.speak()); //我叫张三,我年龄是20岁了,我上二年级了
+      //
+    </script>
+  </body>
+</html>
