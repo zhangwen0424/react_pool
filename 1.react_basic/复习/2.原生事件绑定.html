@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="btn1">按钮 1</button>
+    <button id="btn2">按钮 2</button>
+    <button onclick="demo()">按钮 3</button>
+    <script>
+      const btn1 = document.getElementById("btn1");
+      btn1.addEventListener("click", () => {
+        console.log("按钮 1 被点了");
+      });
+      const btn2 = document.getElementById("btn2");
+      btn2.onclick = () => {
+        console.log("按钮 2 被点了");
+      };
+      function demo() {
+        console.log("按钮 3 被点了");
+      }
+    </script>
+  </body>
+</html>

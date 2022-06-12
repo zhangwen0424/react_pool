@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>01.hello_react</title>
+  </head>
+  <body>
+    <!-- 准备好一个“容器” -->
+    <div id="test"></div>
+
+    <!-- 引入react核心库 -->
+    <script src="../js/react.development.js"></script>
+    <!-- 引入react-dom，用于支持react操作DOM -->
+    <script src="../js/react-dom.development.js"></script>
+    <!-- 引入babel，用于将jsx转为js -->
+    <script src="../js/babel.min.js"></script>
+    <!-- 引入prop-types，用于对组件标签属性进行限制 -->
+    <script type="text/javascript" src="../js/prop-types.js"></script>
+
+    <!-- 此处一定要写babel -->
+    <script type="text/babel">
+      //1.创建类式组件
+      class MyComponent extends React.Component {
+        constructor(props) {
+          //构造器是否接收props，是否传递给super，取决于：是否希望在构造器中通过this访问props
+          // console.log(props);
+          super(props);
+          console.log("constructor", this.props);
+        }
+        //对标签属性进行类型、必要性的限制
+        static propTypes = {
+          name: PropTypes.string.isRequired, //限制name必传，且为字符串
+          sex: PropTypes.string, //限制sex为字符串
+          age: PropTypes.number, //限制age为数值
+        };
+        //对标签属性进行类型、必要性的限制
+        static defaultProps = {
+          sex: "女",
+          age: 20,
+        };
+
+        render() {
+          console.log("this", this);
+          const { name, age, sex } = this.props;
+          return (
+            <div>
+              <ul>
+                <li>姓名：{name}</li>
+                <li>性别：{sex}</li>
+                <li>年龄：{age}</li>
+              </ul>
+            </div>
+          );
+        }
+      }
+      //2. 渲染组件到页面
+      let p = { name: "老张", age: 20, sex: "男" };
+      ReactDOM.render(<MyComponent {...p} />, document.getElementById("test"));
+    </script>
+  </body>
+</html>
