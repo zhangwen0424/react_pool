@@ -3,6 +3,9 @@
 - 开发者工具
   - react-dev-tools
   - redux-dev-tools
+- vscode 中好用的 plugin
+  - Simple React Snippets
+  - auto rename tag 修改一个标签, 自动修改一对儿
 
 ## react 入门
 
@@ -665,7 +668,17 @@ props 的限制
 
 ### 组件实例三大属性之 ref
 
-字符串形式 ref
+1.字符串形式的 ref `<input ref="input1"/> this.refs.value`  
+2.回调形式的 ref `<input ref={(c)=>{this.input1 = c}}/> this.input1.value`  
+3.createRef 创建 ref 容器
+
+```js
+myRef = React.createRef()
+<input ref="{this.myRef}" />
+this.myRef.current.value
+```
+
+#### 字符串形式 ref
 
 ```html
 <script type="text/babel">
@@ -703,7 +716,7 @@ props 的限制
 </script>
 ```
 
-回调函数形式 ref
+#### 回调函数形式 ref
 
 ```html
 <script type="text/babel">
@@ -745,7 +758,7 @@ props 的限制
 </script>
 ```
 
-回调 ref 中回调函数执行次数问题
+#### 回调 ref 中回调函数执行次数问题
 
 ```html
 <script type="text/babel">
@@ -796,5 +809,124 @@ props 的限制
     }
   }
   ReactDOM.render(<Demo />, document.getElementById("test"));
+</script>
+```
+
+#### createRef
+
+```html
+<script type="text/babel">
+  // 创建组件
+  class Demo extends React.Component {
+    /* 
+          (1).通过onXxx属性指定事件处理函数(注意大小写)
+              a.React使用的是自定义(合成)事件, 而不是使用的原生DOM事件 —————— 为了更好的兼容性
+              b.React中的事件是通过事件委托方式处理的(委托给组件最外层的元素) ————————为了的高效
+          (2).通过event.target得到发生事件的DOM元素对象 ——————————不要过度使用ref
+      */
+    /*
+          React.createRef调用后可以返回一个容器，该容器可以存储被ref所标识的节点,该容器是“专人专用”的
+          区别于字符串类 ref，不用通过 this.refs.myRef 获取，而是直接在 this 上获取
+        */
+    myRef = React.createRef();
+    myRef1 = React.createRef();
+    //展示左侧输入框的数据
+    showData = () => {
+      // 字符串型，this.refs.myRef.value;
+      console.log(this.myRef.current.value);
+    };
+    logData = () => {
+      console.log(this.myRef1.current.value);
+      console.log(this);
+    };
+    render() {
+      const { showData, logData } = this;
+      return (
+        <div>
+          <input ref={this.myRef} type="text" placeholder="点击按钮提示数据" />
+          <button onClick={showData}>点我提示左侧的数据</button>
+          <input
+            type="text"
+            ref={this.myRef1}
+            onBlur={logData}
+            placeholder="失去焦点提示数据"
+          />
+        </div>
+      );
+    }
+  }
+  ReactDOM.render(<Demo />, document.getElementById("test"));
+</script>
+```
+
+#### 事件处理
+
+1.通过 onXxx 属性指定事件处理函数(注意大小写)
+1)React 使用的是自定义(合成)事件, 而不是使用的原生 DOM 事件
+2)React 中的事件是通过事件委托方式处理的(委托给组件最外层的元素)  
+2.通过 event.target 得到发生事件的 DOM 元素对象
+
+### react 中收集表单
+
+#### 非受控组件(不受 state 控制)
+
+```html
+<script type="text/babel">
+  class Login extends React.Component {
+    handleSubmit = (event) => {
+      event.preventDefault();
+      console.log(
+        `您的用户名是：${this.username.value}，密码是：${this.password.value}`
+      );
+    };
+    render() {
+      return (
+        <form onSubmit={this.handleSubmit}>
+          用户名：
+          <input type="text" ref={(c) => (this.username = c)} />
+          密码：
+          <input type="password" ref={(c) => (this.password = c)} />
+          <button>登录</button>
+        </form>
+      );
+    }
+  }
+  ReactDOM.render(<Login />, document.getElementById("test"));
+</script>
+```
+
+#### 受控组件
+
+```html
+<script type="text/babel">
+  class Login extends React.Component {
+    //初始化状态
+    state = {
+      username: "", //用户名
+      password: "", //密码
+    };
+    changeValue = (event) => {
+      let dataObj = { [event.target.name]: event.target.value };
+      this.setState(dataObj);
+    };
+    handleSubmit = (event) => {
+      event.preventDefault();
+      console.log(
+        `您的用户名是：${this.state.username}，密码是：${this.state.password}`
+      );
+    };
+    render() {
+      return (
+        <form onSubmit={this.handleSubmit}>
+          用户名：
+          <input type="text" onChange={this.changeValue} name="username" />
+          密码：
+          <input type="password" onChange={this.changeValue} name="password" />
+          <button>登录</button>
+        </form>
+      );
+    }
+  }
+  ReactDOM.render(<Login />, document.getElementById("test"));
 </script>
 ```
