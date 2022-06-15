@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="../js/react.development.js"></script>
+    <script src="../js/react-dom.development.js"></script>
+    <script src="../js/babel.min.js"></script>
+    <script type="text/babel">
+      // 创建组件
+      class Life extends React.Component {
+        state = { opacity: 1 };
+        // 销毁组件
+        destroy = () => {
+          console.log("destroy");
+          //卸载组件
+          ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+        };
+        //组件挂完毕
+        componentDidMount() {
+          console.log("componentDidMount");
+          let { opacity } = this.state;
+          this.timer = setInterval(() => {
+            opacity -= 0.1;
+            if (opacity < 0) opacity = 1;
+            this.setState({ opacity });
+          }, 200);
+        }
+        // 组件将要卸载
+        componentWillUnmount() {
+          console.log("componentWillUnmount");
+          clearInterval(this.timer);
+        }
+        render() {
+          console.log("render");
+          return (
+            <div>
+              <h4 style={{ opacity: this.state.opacity }}>React 学习</h4>
+              <button onClick={this.destroy}>销毁组件</button>
+            </div>
+          );
+        }
+      }
+      ReactDOM.render(<Life />, document.getElementById("root"));
+    </script>
+  </body>
+</html>

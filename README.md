@@ -6,6 +6,7 @@
 - vscode 中好用的 plugin
   - Simple React Snippets
   - auto rename tag 修改一个标签, 自动修改一对儿
+  - ES7+ React/Redux/React-Native snippets 速写代码片段
 
 ## react 入门
 
@@ -928,5 +929,156 @@ this.myRef.current.value
     }
   }
   ReactDOM.render(<Login />, document.getElementById("test"));
+</script>
+```
+
+高阶函数和函数柯里化复习
+
+```html
+<script type="text/babel">
+  /* 
+    高阶函数：如果一个函数符合下面2个规范中的任何一个，那该函数就是高阶函数。
+            1.若A函数，接收的参数是一个函数，那么A就可以称之为高阶函数。
+            2.若A函数，调用的返回值依然是一个函数，那么A就可以称之为高阶函数。
+            常见的高阶函数有：Promise、setTimeout、arr.map()等等
+
+    函数的柯里化：通过函数调用继续返回函数的方式，实现多次接收参数最后统一处理的函数编码形式。 
+      function sum(a){
+        return(b)=>{
+          return (c)=>{
+            return a+b+c
+          }
+        }
+      }
+    */
+  //创建组件
+  class Login extends React.Component {
+    state = {
+      username: "",
+      password: "",
+    };
+    //保存表单数据到状态中
+    saveData = (dataType) => {
+      return (event) => {
+        console.log("dataType", dataType, event);
+        this.setState({ [dataType]: event.target.value });
+      };
+    };
+    //表单提交的回调
+    submit = (event) => {
+      event.preventDefault(); //阻止表单提交
+      console.log("this.state", this.state);
+    };
+    render() {
+      return (
+        <form onSubmit={this.submit}>
+          用户名:
+          <input
+            type="text"
+            onChange={this.saveData("username")}
+            placeholder="请输入用户名"
+          />
+          密码:
+          <input
+            type="text"
+            onChange={this.saveData("password")}
+            placeholder="请输入密码"
+          />
+          <button>提交</button>
+        </form>
+      );
+    }
+  }
+  //渲染组件
+  ReactDOM.render(<Login />, document.getElementById("test"));
+</script>
+```
+
+不用函数柯里化实现
+
+```html
+<script type="text/babel">
+  //创建组件
+  class Login extends React.Component {
+    state = {
+      username: "",
+      password: "",
+    };
+    //保存表单数据到状态中
+    saveData = (dataType) => {
+      console.log("dataType", dataType, event);
+      this.setState({ [dataType]: event.target.value });
+    };
+    //表单提交的回调
+    submit = (event) => {
+      event.preventDefault(); //阻止表单提交
+      console.log("this.state", this.state);
+    };
+    render() {
+      return (
+        <form onSubmit={this.submit}>
+          用户名:
+          <input
+            type="text"
+            onChange={(e) => this.saveData("username", e)}
+            placeholder="请输入用户名"
+          />
+          密码:
+          <input
+            type="text"
+            onChange={(e) => this.saveData("password")}
+            placeholder="请输入密码"
+          />
+          <button>提交</button>
+        </form>
+      );
+    }
+  }
+  //渲染组件
+  ReactDOM.render(<Login />, document.getElementById("test"));
+</script>
+```
+
+### 组件的生命周期
+
+引出生命周期
+
+```html
+<script type="text/babel">
+  // 创建组件
+  class Life extends React.Component {
+    state = { opacity: 1 };
+    // 销毁组件
+    destroy = () => {
+      console.log("destroy");
+      //卸载组件
+      ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+    };
+    //组件挂完毕
+    componentDidMount() {
+      console.log("componentDidMount");
+      let { opacity } = this.state;
+      this.timer = setInterval(() => {
+        opacity -= 0.1;
+        if (opacity < 0) opacity = 1;
+        this.setState({ opacity });
+      }, 200);
+    }
+    // 组件将要卸载
+    componentWillUnmount() {
+      console.log("componentWillUnmount");
+      clearInterval(this.timer);
+    }
+    render() {
+      console.log("render");
+      return (
+        <div>
+          <h4 style={{ opacity: this.state.opacity }}>React 学习</h4>
+          <button onClick={this.destroy}>销毁组件</button>
+        </div>
+      );
+    }
+  }
+  ReactDOM.render(<Life />, document.getElementById("root"));
 </script>
 ```
