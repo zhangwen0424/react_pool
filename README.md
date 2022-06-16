@@ -1041,7 +1041,11 @@ this.myRef.current.value
 
 ### 组件的生命周期
 
-引出生命周期
+![react 生命周期（旧）](<https://hub.fastgit.org/zhangwen0424/react_test/blob/8ec753f80c5bfe0673f971e161d86b0faea9296a/image/react%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F(%E6%97%A7).png>)
+
+![react 生命周期（新）](<https://github.com/zhangwen0424/react_test/blob/main/image/react%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F(%E6%97%A7).png>)
+
+#### 引出生命周期
 
 ```html
 <script type="text/babel">
@@ -1083,26 +1087,503 @@ this.myRef.current.value
 </script>
 ```
 
-## react 应用（基于脚手架）
+#### react 生命周期（旧）
 
-### 使用 create-react-app 创建 react 应用
+```html
+<script type="text/babel">
+  /* 
+    1. 初始化阶段: 由ReactDOM.render()触发---初次渲染
+              1. constructor()
+              2. componentWillMount()
+              3. render()
+              4. componentDidMount() =====> 常用
+                      一般在这个钩子中做一些初始化的事，例如：开启定时器、发送网络请求、订阅消息
+    2. 更新阶段: 由组件内部this.setSate()或父组件render触发
+              1. shouldComponentUpdate()
+              2. componentWillUpdate()
+              3. render() =====> 必须使用的一个
+              4. componentDidUpdate()
+    3. 卸载组件: 由ReactDOM.unmountComponentAtNode()触发
+              1. componentWillUnmount()  =====> 常用
+                      一般在这个钩子中做一些收尾的事，例如：关闭定时器、取消订阅消息
+    4.父子组件执行周期：
+          初始化时：
+              Count-constructor
+              Count-componentWillMount
+              Count-render
+              Child-constructor
+              Child-componentWillMount
+              Child-render
+              Child-componentDidMount
+              Count-componentDidMount
+          更新时：
+              Count-shouldComponentUpdate
+              Count-componentWillUpdate
+              Count-render
+              Child-componentWillReceiveProps
+              Child-shouldComponentUpdate
+              Child-componentWillUpdate
+              Child-render
+              Child-componentDidUpdate
+              Count-componentDidUpdate
+          销毁时：
+              Count-componentWillUnmount
+              Child-componentWillUnmount
+      */
+  // 创建组件
+  class Count extends React.Component {
+    //构造器
+    constructor(props) {
+      console.log("Count-constructor");
+      super(props);
+      //初始化状态
+      this.state = { count: 0 };
+    }
+    //组件将要挂载的钩子
+    componentWillMount() {
+      console.log("Count-componentWillMount");
+    }
+    //组件挂载完毕的钩子
+    componentDidMount() {
+      console.log("Count-componentDidMount");
+    }
+    // 组件将要就卸载
+    componentWillUnmount() {
+      console.log("Count-componentWillUnmount");
+    }
+    //控制组件更新的“阀门”
+    shouldComponentUpdate() {
+      console.log("Count-shouldComponentUpdate");
+      return true;
+    }
+    componentWillUpdate() {
+      console.log("Count-componentWillUpdate");
+    }
+    //组件更新完毕的钩子
+    componentDidUpdate() {
+      console.log("Count-componentDidUpdate");
+    }
 
-#### react 脚手架
+    //加1按钮的回调
+    addCount = () => {
+      this.setState({ count: this.state.count + 1 });
+    };
+    // 销毁组件
+    destroy = () => {
+      console.log("Count-unmountComponentAtNode");
+      ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+    };
+    // 强制更新
+    update = () => {
+      this.forceUpdate();
+    };
 
-- 1.xxx 脚手架: 用来帮助程序员快速创建一个基于 xxx 库的模板项目
-  - 1.包含了所有需要的配置（语法检查、jsx 编译、devServer…）
-  - 2.下载好了所有相关的依赖
-  - 3.可以直接运行一个简单效果
-- 2.react 提供了一个用于创建 react 项目的脚手架库: create-react-app
-- 3.项目的整体技术架构为: react + webpack + es6 + eslint 4.使用脚手架开发的项目的特点: 模块化, 组件化, 工程化
+    render() {
+      console.log("Count-render");
+      const { count } = this.state;
+      return (
+        <div>
+          <h2>当前求和为：{count}</h2>
+          <button onClick={this.addCount}>点我+1</button>
+          <button onClick={this.destroy}> 销毁组件</button>
+          <button onClick={this.update}>
+            不更改任何状态中的数据，强制更新一下
+          </button>
+          <Child count={this.state.count} />
+        </div>
+      );
+    }
+  }
+  // 创建子组件
+  class Child extends React.Component {
+    //构造器
+    constructor(props) {
+      console.log("Child-constructor");
+      super(props);
+    }
+    // 组件将要接收新 props
+    componentWillReceiveProps() {
+      console.log("Child-componentWillReceiveProps");
+    }
+    //组件将要挂载的钩子
+    componentWillMount() {
+      console.log("Child-componentWillMount");
+    }
+    //组件挂载完毕的钩子
+    componentDidMount() {
+      console.log("Child-componentDidMount");
+    }
+    // 组件将要就卸载
+    componentWillUnmount() {
+      console.log("Child-componentWillUnmount");
+    }
+    //控制组件更新的“阀门”
+    shouldComponentUpdate() {
+      console.log("Child-shouldComponentUpdate");
+      return true;
+    }
+    componentWillUpdate() {
+      console.log("Child-componentWillUpdate");
+    }
+    //组件更新完毕的钩子
+    componentDidUpdate() {
+      console.log("Child-componentDidUpdate");
+    }
+    render() {
+      console.log("Child-render");
+      return <div>我是子组件，我接受到 Count 组件的值为{this.props.count}</div>;
+    }
+  }
+  ReactDOM.render(<Count />, document.getElementById("root"));
+</script>
+```
 
-#### 创建项目并启动
+#### react 生命周期（新）
+
+```html
+<script type="text/babel">
+  /*
+          即将废弃：
+              componentWillMount
+              componentWillReceiveProps
+              componentWillUpdate
+          1. 初始化阶段: 由ReactDOM.render()触发---初次渲染
+                  1. constructor()
+                  2. getDerivedStateFromProps
+                  3. render()
+                  4. componentDidMount() =====> 常用
+                        一般在这个钩子中做一些初始化的事，例如：开启定时器、发送网络请求、订阅消息
+          2. 更新阶段: 由组件内部this.setSate()或父组件重新render触发
+                  1. getDerivedStateFromProps
+                  2. shouldComponentUpdate()
+                  3. render()
+                  4. getSnapshotBeforeUpdate
+                  5. componentDidUpdate()
+          3. 卸载组件: 由ReactDOM.unmountComponentAtNode()触发
+                  1.  componentWillUnmount()  =====> 常用
+                        一般在这个钩子中做一些收尾的事，例如：关闭定时器、取消订阅消息
+          4.父子组件执行周期：
+                初始化时：
+                    Count-constructor
+                    Count-getDerivedStateFromProps
+                    Count-render
+                    Child-constructor
+                    Child-getDerivedStateFromProps
+                    Child-render
+                    Child-componentDidMount
+                    Count-componentDidMount
+                更新时：
+                    Count-getDerivedStateFromProps
+                    Count-shouldComponentUpdate
+                    Count-render
+                    Child-getDerivedStateFromProps
+                    Child-shouldComponentUpdate
+                    Child-render
+                    Child-getSnapshotBeforeUpdate
+                    Count-getSnapshotBeforeUpdate
+                    Child-componentDidUpdate
+                    Count-componentDidUpdate
+                销毁时：
+                    Count-componentWillUnmount
+                    Child-componentWillUnmount
+      */
+  // 创建组件
+  class Count extends React.Component {
+    //构造器
+    constructor(props) {
+      console.log("Count-constructor");
+      super(props);
+      //初始化状态
+      this.state = { count: 0 };
+    }
+    //组件将要挂载的钩子
+    // componentWillMount() {
+    //   console.log("Count-componentWillMount");
+    // }
+    //若state的值在任何时候都取决于props，那么可以使用getDerivedStateFromProps
+    static getDerivedStateFromProps(props, state) {
+      console.log("Count-getDerivedStateFromProps", props, state);
+      return null;
+    }
+    //在更新之前获取快照
+    getSnapshotBeforeUpdate() {
+      console.log("Count-getSnapshotBeforeUpdate");
+      return "1";
+    }
+    //组件挂载完毕的钩子
+    componentDidMount() {
+      console.log("Count-componentDidMount");
+    }
+    // 组件将要就卸载
+    componentWillUnmount() {
+      console.log("Count-componentWillUnmount");
+    }
+    //控制组件更新的“阀门”
+    shouldComponentUpdate() {
+      console.log("Count-shouldComponentUpdate");
+      return true;
+    }
+    // componentWillUpdate() {
+    //   console.log("Count-componentWillUpdate");
+    // }
+    //组件更新完毕的钩子
+    componentDidUpdate() {
+      console.log("Count-componentDidUpdate");
+    }
+
+    //加1按钮的回调
+    addCount = () => {
+      this.setState({ count: this.state.count + 1 });
+    };
+    // 销毁组件
+    destroy = () => {
+      console.log("Count-unmountComponentAtNode");
+      ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+    };
+    // 强制更新
+    update = () => {
+      this.forceUpdate();
+    };
+
+    render() {
+      console.log("Count-render");
+      const { count } = this.state;
+      return (
+        <div>
+          <h2>当前求和为：{count}</h2>
+          <button onClick={this.addCount}>点我+1</button>
+          <button onClick={this.destroy}> 销毁组件</button>
+          <button onClick={this.update}>
+            不更改任何状态中的数据，强制更新一下
+          </button>
+          <Child count={this.state.count} />
+        </div>
+      );
+    }
+  }
+  // 创建子组件
+  class Child extends React.Component {
+    state = {};
+    //构造器
+    constructor(props) {
+      console.log("Child-constructor");
+      super(props);
+    }
+    //若state的值在任何时候都取决于props，那么可以使用getDerivedStateFromProps
+    static getDerivedStateFromProps(props, state) {
+      console.log("Child-getDerivedStateFromProps", props, state);
+      return null;
+    }
+    //在更新之前获取快照
+    getSnapshotBeforeUpdate() {
+      console.log("Child-getSnapshotBeforeUpdate");
+      return "Child";
+    }
+    // 组件将要接收新 props
+    // componentWillReceiveProps() {
+    //   console.log("Child-componentWillReceiveProps");
+    // }
+    //组件将要挂载的钩子
+    // componentWillMount() {
+    //   console.log("Child-componentWillMount");
+    // }
+    //组件挂载完毕的钩子
+    componentDidMount() {
+      console.log("Child-componentDidMount");
+    }
+    // 组件将要就卸载
+    componentWillUnmount() {
+      console.log("Child-componentWillUnmount");
+    }
+    //控制组件更新的“阀门”
+    shouldComponentUpdate() {
+      console.log("Child-shouldComponentUpdate");
+      return true;
+    }
+    // componentWillUpdate() {
+    //   console.log("Child-componentWillUpdate");
+    // }
+    //组件更新完毕的钩子
+    componentDidUpdate() {
+      console.log("Child-componentDidUpdate");
+    }
+    render() {
+      console.log("Child-render");
+      return <div>我是子组件，我接受到 Count 组件的值为{this.props.count}</div>;
+    }
+  }
+  ReactDOM.render(<Count />, document.getElementById("root"));
+</script>
+```
+
+### DOM 的 Diffing 算法
+
+#### 验证 Diffing 算法
+
+```html
+<script type="text/babel">
+  class Time extends React.Component {
+    state = { date: new Date() };
+    componentDidMount() {
+      setInterval(() => {
+        this.setState({ date: new Date() });
+      });
+    }
+    render() {
+      return (
+        <div>
+          <h1>hello</h1>
+          <input type="text" />
+          现在是：{this.state.date.toTimeString()}
+        </div>
+      );
+    }
+  }
+  ReactDOM.render(<Time />, document.getElementById("root"));
+</script>
+```
+
+#### key 的作用
+
+```html
+<script type="text/babel">
+  /*
+        经典面试题:
+            1). react/vue中的key有什么作用？（key的内部原理是什么？）
+            2). 为什么遍历列表时，key最好不要用index?
+            1. 虚拟DOM中key的作用：
+                1). 简单的说: key是虚拟DOM对象的标识, 在更新显示时key起着极其重要的作用。
+                2). 详细的说: 当状态中的数据发生变化时，react会根据【新数据】生成【新的虚拟DOM】,
+                              随后React进行【新虚拟DOM】与【旧虚拟DOM】的diff比较，比较规则如下：
+                        a. 旧虚拟DOM中找到了与新虚拟DOM相同的key：
+                              (1).若虚拟DOM中内容没变, 直接使用之前的真实DOM
+                              (2).若虚拟DOM中内容变了, 则生成新的真实DOM，随后替换掉页面中之前的真实DOM
+                        b. 旧虚拟DOM中未找到与新虚拟DOM相同的key
+                              根据数据创建新的真实DOM，随后渲染到到页面
+            2. 用index作为key可能会引发的问题：
+                      1. 若对数据进行：逆序添加、逆序删除等破坏顺序操作:
+                              会产生没有必要的真实DOM更新 ==> 界面效果没问题, 但效率低。
+                      2. 如果结构中还包含输入类的DOM：
+                              会产生错误DOM更新 ==> 界面有问题。
+                      3. 注意！如果不存在对数据的逆序添加、逆序删除等破坏顺序操作，
+                        仅用于渲染列表用于展示，使用index作为key是没有问题的。
+            3. 开发中如何选择key?:
+                      1.最好使用每条数据的唯一标识作为key, 比如id、手机号、身份证号、学号等唯一值。
+                      2.如果确定只是简单的展示数据，用index也是可以的。
+
+          慢动作回放----使用index索引值作为key
+
+            初始数据：
+                {id:1,name:'小张',age:18},
+                {id:2,name:'小李',age:19},
+            初始的虚拟DOM：
+                <li key=0>小张---18<input type="text"/></li>
+                <li key=1>小李---19<input type="text"/></li>
+
+            更新后的数据：
+                {id:3,name:'小王',age:20},
+                {id:1,name:'小张',age:18},
+                {id:2,name:'小李',age:19},
+            更新数据后的虚拟DOM：
+                <li key=0>小王---20<input type="text"/></li>
+                <li key=1>小张---18<input type="text"/></li>
+                <li key=2>小李---19<input type="text"/></li>
+
+        -----------------------------------------------------------------
+
+        慢动作回放----使用id唯一标识作为key
+
+            初始数据：
+                {id:1,name:'小张',age:18},
+                {id:2,name:'小李',age:19},
+            初始的虚拟DOM：
+                <li key=1>小张---18<input type="text"/></li>
+                <li key=2>小李---19<input type="text"/></li>
+
+            更新后的数据：
+                {id:3,name:'小王',age:20},
+                {id:1,name:'小张',age:18},
+                {id:2,name:'小李',age:19},
+            更新数据后的虚拟DOM：
+                <li key=3>小王---20<input type="text"/></li>
+                <li key=1>小张---18<input type="text"/></li>
+                <li key=2>小李---19<input type="text"/></li>
+
+
+        */
+  class Person extends React.Component {
+    state = {
+      persons: [
+        { id: 1, name: "小张", age: 18 },
+        { id: 2, name: "小李", age: 19 },
+      ],
+    };
+    add = () => {
+      const { persons } = this.state;
+      this.setState({
+        persons: [
+          { id: persons.length + 1, name: "小王", age: 20 },
+          ...persons,
+        ],
+      });
+    };
+    render() {
+      const { persons } = this.state;
+      return (
+        <div>
+          <h2>人员数据：</h2>
+          <button onClick={this.add}>添加一个小王</button>
+          <h3>使用index（索引值）作为key</h3>
+          <ul>
+            {persons.map((person, index) => {
+              return (
+                <li key={index}>
+                  {person.name}
+                  <input type="text" />
+                </li>
+              );
+            })}
+          </ul>
+          <h3>使用id（数据的唯一标识）作为key</h3>
+          <ul>
+            {persons.map((person, index) => {
+              return (
+                <li key={person.id}>
+                  {person.name}
+                  <input type="text" />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      );
+    }
+  }
+  ReactDOM.render(<Person />, document.getElementById("root"));
+</script>
+```
+
+## react 应用（基于脚手架） ### 使用 create-react-app 创建 react 应用
+
+### react 脚手架
+
+1. xxx 脚手架: 用来帮助程序员快速创建一个基于 xxx 库的模板项目
+   1. 包含了所有需要的配置（语法检查、jsx 编译、devServer…）
+   2. 下载好了所有相关的依赖
+   3. 可以直接运行一个简单效果
+2. react 提供了一个用于创建 react 项目的脚手架库: create-react-app
+3. 项目的整体技术架构为: react + webpack + es6 + eslint
+4. 使用脚手架开发的项目的特点: 模块化, 组件化, 工程化
+
+### 创建项目并启动
 
 第一步，全局安装：npm i -g create-react-app
 第二步，切换到想创项目的目录，使用命令：create-react-app hello-react
-第三步，进入项目文件夹：cd hello-react
+第三步，进入项目文件夹：cd hello-react  
 第四步，启动项目：npm start
-3.1.3. react 脚手架项目结构
+
+### react 脚手架项目结构
+
 public ---- 静态资源文件夹
 favicon.icon ------ 网站页签图标
 index.html -------- 主页面
@@ -1110,18 +1591,18 @@ logo192.png ------- logo 图
 logo512.png ------- logo 图
 manifest.json ----- 应用加壳的配置文件
 robots.txt -------- 爬虫协议文件
-src ---- 源码文件夹
+src---- 源码文件夹
 App.css -------- App 组件的样式
 App.js --------- App 组件
 App.test.js ---- 用于给 App 做测试
 index.css ------ 样式
-index.js ------- 入口文件
+index.js -------入口文件
 logo.svg ------- logo 图
-reportWebVitals.js
---- 页面性能分析文件(需要 web-vitals 库的支持)
-setupTests.js
----- 组件单元测试的文件(需要 jest-dom 库的支持)
-3.1.4. 功能界面的组件化编码流程（通用）
+reportWebVitals.js --- 页面性能分析文件(需要 web-vitals 库的支持)
+setupTests.js ---- 组件单元测试的文件(需要 jest-dom
+库的支持)
+
+### 功能界面的组件化编码流程（通用）
 
 1. 拆分组件: 拆分界面,抽取组件
 2. 实现静态组件: 使用组件实现静态页面效果
@@ -1131,3 +1612,76 @@ setupTests.js
    3.1.2 数据名称
    3.1.2 保存在哪个组件?
    3.2 交互(从绑定事件监听开始)
+
+### hello_react
+
+index.js
+
+```js
+//引入react核心库
+import React from "react";
+//引入react核心库
+import { createRoot } from "react-dom/client";
+import App from "./App";
+
+/* 
+  ReactDOM.render is no longer supported in React 18. 
+  // Before
+  import { render } from 'react-dom';
+  const container = document.getElementById('app');
+  render(<App tab="home" />, container);
+
+  // After
+  import { createRoot } from 'react-dom/client';
+  const container = document.getElementById('app');
+  const root = createRoot(container); // createRoot(container!) if you use TypeScript
+  root.render(<App tab="home" />); 
+*/
+
+//渲染App到页面
+createRoot(document.getElementById("root")).render(<App />);
+```
+
+App.jsx
+
+```js
+import React, { Component } from "react";
+import Hello from "./components/Hello";
+import Welcome from "./components/Welcome";
+
+export default class APP extends Component {
+  render() {
+    return (
+      <div>
+        <Hello />
+        <Welcome />
+      </div>
+    );
+  }
+}
+```
+
+components/Hello/index.jsx
+
+```js
+import React, { Component } from "react";
+import hello from "./index.module.css";
+
+export default class Hello extends Component {
+  render() {
+    return <div className={hello.title}>Hello</div>;
+  }
+}
+```
+
+components/Hello/index.module.css
+
+<!-- 防止命名冲突，可在每个组件中写入 css，但后缀必须写: .module.css -->
+
+```css
+.title {
+  background-color: blue;
+}
+```
+
+### todo_list 案例
