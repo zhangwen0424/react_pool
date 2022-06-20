@@ -1577,6 +1577,7 @@ this.myRef.current.value
 
 ### 创建项目并启动
 
+node: v14.17.6
 第一步，全局安装：npm i -g create-react-app
 第二步，切换到想创项目的目录，使用命令：create-react-app hello-react
 第三步，进入项目文件夹：cd hello-react  
@@ -1676,7 +1677,8 @@ export default class Hello extends Component {
 
 components/Hello/index.module.css
 
-<!-- 防止命名冲突，可在每个组件中写入 css，但后缀必须写: .module.css -->
+<!-- 防止命名冲突，可在每个组件中写入 css，但后缀必须写: .module.css
+ -->
 
 ```css
 .title {
